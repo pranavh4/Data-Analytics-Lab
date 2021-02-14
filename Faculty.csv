@@ -1,0 +1,11 @@
+faculty_name,Faculty_no,address,dept,designation,salary
+pranav,cs001,rt nagar,cse,Professor,1500000
+    hari  premkumar,cs002,hmt layout,cse,Associate Professor,500000
+rekha,cs003,rr nagar,cse,Assistant Professor,650000
+pradeep,cs004,frazer town,cse,Assistant Professor,500
+2sita,cs005,benson town,cse,Associate Professor,300000 rs
+bansi27,cs006,kodigehalli,cse,Professor,NA
+kriti#,cs007,hebbal,cse,Associate Professor,400000 Rs
+      kiran   mhm,cs008,whitefield,cse,Assistant Professor,NA
+Pradeep,cs004,frazer town,cse,Assistant Professor,600000
+soorya,cs010,yelahanka,cse,Professor,550000

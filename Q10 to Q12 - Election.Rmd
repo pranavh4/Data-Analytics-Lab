@@ -1,0 +1,46 @@
+```{r}
+election <-  read.table('election.csv', header=TRUE, sep=',')
+election
+```
+
+```{r}
+party <- unique(election["Party"])
+party
+```
+
+
+```{r}
+vote_count <- replicate(nrow(party), 0)
+counts <- data.frame(party, vote_count)
+counts
+```
+
+
+```{r}
+for (row in (1:nrow(counts))){
+  val <- counts[row, "Party"]
+  voter_party_x <- election[election$Party == val, ]
+  counts [row, "vote_count"] <- nrow(voter_party_x)
+}
+counts
+
+```
+
+
+```{r}
+vote_x <- counts$vote_count
+vote_labels <- counts$Party
+pie (vote_x, vote_labels, main="vote share") #pie chart
+```
+
+
+```{r}
+barplot (vote_x, names.arg = vote_labels, main="vote share") #bar plot
+```
+
+```{r}
+boxplot (vote_x,main="Party Votes Boxplot")
+hist (vote_x)
+```
+
+

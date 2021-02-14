@@ -1,0 +1,77 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
+
+```{r}
+library(stringr)
+```
+
+```{r}
+table <- read.csv('students.csv',header=TRUE,sep=',')
+table
+```
+
+```{r}
+#Operations on names
+
+#Removing Redundant Whitespaces
+table$names <- sapply(table$names,str_squish)
+
+#Remove Numbers and Special Chars from names
+table$names <- sapply(table$names,function(x) str_replace_all(x,"[^A-Za-z\\s]",""))
+
+#Convert Names to Lowercase
+table$names <- sapply(table$names,tolower)
+
+#Remove Redundant Names
+table <- unique(table)
+rownames(table) <- 1:nrow(table)
+
+table
+```
+
+```{r}
+#Operations on CGPA
+
+percToCGPA <- function(x){
+  if(grepl("%",x,fixed = TRUE)==TRUE)
+    return(as.double(sub("%","",x))/10+0.75)
+  else
+    return(as.numeric(toString(x)))
+}
+
+#Convert Percentage to CGPA
+table$cgpa <- sapply(table$cgpa,percToCGPA)
+
+cgpa_mean <- round(mean(table$cgpa[which(table$cgpa>6 & table$cgpa<10)]),digits = 2)
+
+#Calculate outlier bounds
+Q <- quantile(table$cgpa[which(table$cgpa>6 & table$cgpa<10)], probs=c(.25, .75), na.rm = FALSE)
+iqr <- IQR(table$cgpa[which(table$cgpa>6 & table$cgpa<10)])
+high <-  Q[2]+1.5*iqr
+low<- Q[1]-1.5*iqr 
+
+#Function to replace outliers, NA and impossible values with mean
+replace <- function(x){
+  if(is.na(x) || x > 10 || x < 6 || x < low || x > high)
+    return(cgpa_mean)
+  else
+    return(x)
+}
+
+#Replace NA values and Outlier values with avg
+table$cgpa <- sapply(table$cgpa,replace)
+
+table
+```
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
+
+The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.

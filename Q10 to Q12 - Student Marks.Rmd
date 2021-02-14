@@ -1,0 +1,53 @@
+```{r}
+student <- read.table('student-marks.csv', header=TRUE, sep=',')
+student
+```
+
+```{r}
+#Pie Chart and Bar Plot
+for (row in 1:nrow(student)){
+  x <- as.numeric(student[row,-(1:3)])
+  labels <- colnames(student)[-(1:3)]
+  main_title <- paste (student[row, "Name"], "share of marks subject wise", sep=" ")
+  pie(x,labels, main=main_title)
+  main_title <- paste (student[row, "Name"], "marks subject wise", sep=" ")
+  barplot(x, names.arg = labels , main = main_title)
+}
+```
+
+
+```{r}
+#Box plot
+subjects <- colnames(student)[-(1:3)]
+boxplot(student[subjects],main="Student Marks Boxplot")
+```
+
+```{r}
+#Gender Split
+females <- student[student$Gender=="F",]
+males <- student[student$Gender=="M",]
+# females 
+# males 
+```
+
+```{r}
+#Pie Chart and Bar Plot
+subjects <- c("Physics","Maths","Chemistry","FOC","CAD")
+gender_labels <- c("Male","Female")
+for(s in subjects){
+  female_avg <- mean(females[[s]])
+  male_avg <- mean(males[[s]])
+  grades <- c(male_avg,female_avg)
+  pie(grades,gender_labels,main = paste(s,"Marks Share"))
+  barplot(grades,names.arg = gender_labels, main = s)
+}
+```
+
+```{r}
+#Box Plot
+boxplot(females[subjects],main="Female Students' Performance Boxplot")
+boxplot(males[subjects],main="Males Students' Performance Boxplot")
+
+```
+
+

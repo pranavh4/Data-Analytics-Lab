@@ -1,0 +1,114 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
+
+```{r}
+#Source - https://web.stanford.edu/class/archive/cs/cs109/cs109.1178/lectureHandouts/220-logistic-regression.pdf
+#Few changes made to algo to make it stochastic gradient ascent
+#parameters updated for every training example instead of after every epoch
+```
+
+```{r}
+library(ISLR)
+data <- Default
+data['student'] = apply(data['student'], 1, function(x) {if(x=="No") return(0) else return(1)})
+data['default'] = apply(data['default'], 1, function(x) {if(x=="No") return(0) else return(1)})
+data
+```
+
+```{r}
+train_ind = sample.int(nrow(data),size = 0.75*nrow(data))
+set.seed(123)
+train <- data[train_ind,]
+test <- data[-train_ind,]
+
+max_bal <- max(train['balance'])
+min_bal <- min(train['balance'])
+max_inc <- max(train['income'])
+min_inc <- min(train['income'])
+
+train['balance'] <- apply(train['balance'],1,function(x) return((x-min_bal)/(max_bal-min_bal)))
+train['income'] <- apply(train['income'],1,function(x) return((x-min_inc)/(max_inc-min_inc)))
+x_train <- train[,-1]
+y_train <- train[,1]
+x_test <- train[,-1]
+y_test <- train[,1]
+```
+
+```{r}
+logisticReg <- function(X,Y,lr=1,threshold=0.1){
+  params <- rep(0,ncol(x_train)+1)
+  prev_loss <- 0.0
+  diff <- Inf
+  
+  while(diff>threshold){
+    curr_loss <- 0.0
+    gradient <- rep(0,length(params))
+    diff <- 0
+    
+    for(row in 1:nrow(X)){
+      x<-as.numeric(c(list(1),X[row,]))
+      pred <- as.double(1/as.double(1+exp(-(x%*%params))))
+      loss <- Y[row] - pred
+
+      curr_loss <- curr_loss + (loss^2)
+      for(p in 1:length(params))
+        params[p] <- params[p] + lr*x[p]*loss
+    }
+    
+    curr_loss <- sqrt(curr_loss)
+    diff <- abs(curr_loss-prev_loss)
+    prev_loss <- curr_loss
+    print(curr_loss)
+    
+  }
+  return(params)
+}
+
+params <- logisticReg(x_train,y_train)
+```
+```{r}
+getPred<-function(x){
+  x<-as.numeric(c(list(1),x))
+  return(1/(1+exp(-(x%*%params))))
+}
+
+getClass <- function(x){
+  if(x>=0.5)
+    return(1)
+  return(0)
+}
+```
+
+```{r}
+model <- glm(default ~ student + balance + income, data = train, family = binomial)
+```
+
+```{r}
+#Print RSE
+sqrt(sum((y_train-predict(model,x_train,type='response'))^2))
+sqrt(sum((y_train - apply(x_train,1,getPred))^2))
+```
+```{r}
+pred <- sapply(apply(x_train,1,getPred),getClass)
+predLib <- sapply(predict(model,x_train,type='response'),getClass)
+```
+
+```{r}
+print("Confusion Matrix for Custom LR")
+table(pred,y_train)
+print("Confusion Matrix for LR using Library Function")
+table(predLib,y_train)
+```
+
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
+
+The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
