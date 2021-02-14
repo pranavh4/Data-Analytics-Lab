@@ -36,12 +36,14 @@ train['balance'] <- apply(train['balance'],1,function(x) return((x-min_bal)/(max
 train['income'] <- apply(train['income'],1,function(x) return((x-min_inc)/(max_inc-min_inc)))
 x_train <- train[,-1]
 y_train <- train[,1]
-x_test <- train[,-1]
-y_test <- train[,1]
+test['balance'] <- apply(test['balance'],1,function(x) return((x-min_bal)/(max_bal-min_bal)))
+test['income'] <- apply(test['income'],1,function(x) return((x-min_inc)/(max_inc-min_inc)))
+x_test <- test[,-1]
+y_test <- test[,1]
 ```
 
 ```{r}
-logisticReg <- function(X,Y,lr=1,threshold=0.1){
+logisticReg <- function(X,Y,lr=1,threshold=0.001){
   params <- rep(0,ncol(x_train)+1)
   prev_loss <- 0.0
   diff <- Inf
@@ -94,15 +96,15 @@ sqrt(sum((y_train-predict(model,x_train,type='response'))^2))
 sqrt(sum((y_train - apply(x_train,1,getPred))^2))
 ```
 ```{r}
-pred <- sapply(apply(x_train,1,getPred),getClass)
-predLib <- sapply(predict(model,x_train,type='response'),getClass)
+pred <- sapply(apply(x_test,1,getPred),getClass)
+predLib <- sapply(predict(model,x_test,type='response'),getClass)
 ```
 
 ```{r}
 print("Confusion Matrix for Custom LR")
-table(pred,y_train)
+table(pred,y_test)
 print("Confusion Matrix for LR using Library Function")
-table(predLib,y_train)
+table(predLib,y_test)
 ```
 
 
