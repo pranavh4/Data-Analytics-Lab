@@ -48,7 +48,6 @@ logisticReg <- function(X,Y,lr=1,threshold=0.1){
   
   while(diff>threshold){
     curr_loss <- 0.0
-    gradient <- rep(0,length(params))
     diff <- 0
     
     for(row in 1:nrow(X)){
