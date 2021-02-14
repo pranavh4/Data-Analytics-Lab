@@ -6,7 +6,7 @@ y <- data$totalUnits
 mean_x <- sum(x)/nrow(data)
 mean_y <- sum(y)/nrow(data)
 
-b_1 <- sum(sapply(x,function(x) return(x-mean_x))*sapply(y,function(y) return(y-mean_y)))/sum(sapply(x,function(x) return((x-mean_x)^2)))
+b_1 <- sum((x-mean_x)*(y-mean_y))/sum((x-mean_x)^2)
 b_0 <- mean_y - b_1*mean_x
 
 getPred<-function(x){
@@ -31,3 +31,4 @@ x_test_lib = data.frame(budget=c(3000,4000,5000,6000,7000))
 predictions_lib<-predict(linearMod,x_test_lib)
 
 plot(x_test,predictions_lib)
+

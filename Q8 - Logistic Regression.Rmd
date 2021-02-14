@@ -32,12 +32,13 @@ min_bal <- min(train['balance'])
 max_inc <- max(train['income'])
 min_inc <- min(train['income'])
 
-train['balance'] <- apply(train['balance'],1,function(x) return((x-min_bal)/(max_bal-min_bal)))
-train['income'] <- apply(train['income'],1,function(x) return((x-min_inc)/(max_inc-min_inc)))
+train$balance <- (train$balance-min_bal)/(max_bal-min_bal)
+train$income <- (train$income-min_inc)/(max_inc-min_inc)
 x_train <- train[,-1]
 y_train <- train[,1]
-test['balance'] <- apply(test['balance'],1,function(x) return((x-min_bal)/(max_bal-min_bal)))
-test['income'] <- apply(test['income'],1,function(x) return((x-min_inc)/(max_inc-min_inc)))
+
+test$balance <- (test$balance-min_bal)/(max_bal-min_bal)
+test$income <- (test$income-min_inc)/(max_inc-min_inc)
 x_test <- test[,-1]
 y_test <- test[,1]
 ```
@@ -53,7 +54,7 @@ logisticReg <- function(X,Y,lr=1,threshold=0.001){
     diff <- 0
     
     for(row in 1:nrow(X)){
-      x<-as.numeric(c(list(1),X[row,]))
+      x<-as.numeric(c(1,X[row,]))
       pred <- as.double(1/as.double(1+exp(-(x%*%params))))
       loss <- Y[row] - pred
 
@@ -75,7 +76,7 @@ params <- logisticReg(x_train,y_train)
 ```
 ```{r}
 getPred<-function(x){
-  x<-as.numeric(c(list(1),x))
+  x<-as.numeric(c(1,x))
   return(1/(1+exp(-(x%*%params))))
 }
 

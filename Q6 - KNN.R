@@ -13,8 +13,8 @@ getPred<-function(x,k){
   temp_table <- table
   temp_table$dist <- distance
   temp_table <- temp_table[order(temp_table$dist),]
-  n_classes <- temp_table[1:k,3]
-  count_table <- table(n_classes)
+  k_nb <- temp_table[1:k,3]
+  count_table <- table(k_nb)
   classes <- names(count_table)
   return(classes[which.max(count_table)])
 }
